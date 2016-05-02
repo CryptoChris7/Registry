@@ -11,7 +11,7 @@ def main():
                   ('getVal', (a2.address_as_int, 'foo'), a2Send, 456),
                   ('getOwnVal', ('foo',), {}, 123),
                   ('addToRegistry', ('foo', 789, 0), {}, 0),
-                  ('getOwnVal', ('foo',), {}, 123)
+                  ('getOwnVal', ('foo',), {}, 123),
                   ('addToRegistry', ('foo', 789, 1), {}, 1),
                   ('getOwnVal', ('foo',), {}, 789)]
     myTest.run_tests(test_cases)
