@@ -9,37 +9,81 @@ def getloc(owner, key):
         temp[1] = key
         return(sha3(temp, items=2))
 
+macro _reg:
+    with currentVal = sload(loc):
+        if currentVal == 0:
+            sstore(loc, val)
+            True
+        else:
+            False
+
+macro _rm:
+    with current_val = sload(loc):
+        if current_val != 0:
+            sstore(loc, 0)
+            True
+        else:
+            False
+
+macro _ud:
+    with current_val = sload(loc):
+        if current_val != 0:
+            sstore(loc, val)
+            True
+        else:
+            False
+            
 def register(key, val):
     with loc = self.getloc(msg.sender, key):
-        with currentVal = sload(loc):
-            if currentVal == 0:
-                sstore(loc, val)
-                return(True)
-            else:
-                return(False)
+        return(_reg)
 
-def unregister(key):
+def multiregister(keys:arr, vals:arr):
+    with num_keys = len(keys):
+        with i = 0:
+            while i < num_keys:
+                with loc = self.getloc(msg.sender, keys[i]):
+                    with val = vals[i]:
+                        with success = _reg:
+                            if not success:
+                                return([False, keys[i], val]:arr)
+                i += 1
+            return([True, 0, 0]:arr)
+
+def remove(key):
     with loc = self.getloc(msg.sender, key):
-        with current_val = sload(loc):
-            if current_val != 0:
-                sstore(loc, 0)
-                return(True)
-            else:
-                return(False)
+        return(_rm)
+
+def multiremove(keys:arr):
+    with num_keys = len(keys):
+        with i = 0:
+            while i < num_keys:
+                with loc = self.getloc(msg.sender, keys[i]):
+                    with success = _rm:
+                        if not success:
+                            return([False, keys[i]]:arr)
+                i += 1
+            return([True, 0]:arr)
 
 def update(key, val):
     with loc = self.getloc(msg.sender, key):
-        with current_val = sload(loc):
-            if current_val != 0:
-                sstore(loc, val)
-                return(True)
-            else:
-                return(False)
+        return(_ud)
 
-def get_own_val(key):
+def multiupdate(keys:arr, vals:arr):
+    with num_keys = len(keys):
+        with i = 0:
+            while i < num_keys:
+                with loc = self.getloc(msg.sender, keys[i]):
+                    with val = vals[i]:
+                        with success = _ud:
+                            if not success:
+                                return([False, keys[i], val]:arr)
+                i += 1
+            return([True, 0, 0]:arr)
+
+def my_lookup(key):
     with loc = self.getloc(msg.sender, key):
         return(sload(loc))
 
-def get_val(owner, key):
+def lookup(owner, key):
     with loc = self.getloc(owner, key):
         return(sload(loc))
