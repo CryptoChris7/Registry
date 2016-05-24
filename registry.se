@@ -3,87 +3,122 @@
 macro True: 1
 macro False: 0
 
-def getloc(owner, key):
+macro RegCount: 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+
+macro check_ownership():
+    if sload(reg_id) != msg.sender:
+        return(False)
+
+macro check_null_reg_id():
+    if reg_id == 0:
+        return(False)
+
+macro default_registry(): sload(msg.sender)
+
+##### OWNERSHIP #####
+
+def create_registry():
+    with reg_id = sload(RegCount): # Get the number of registries.
+        reg_id += 1
+        sstore(RegCount, reg_id) # Increase the number of registries by one.
+        sstore(reg_id, msg.sender) # Set the new registry's owner.
+        if sload(msg.sender) == 0: # If the owner doesn't have a default, set it.
+            sstore(msg.sender, reg_id)
+        return(reg_id) # Return the id of the new registry.
+
+def transfer_owner(new_owner, reg_id):
+    check_ownership()
+    sstore(reg_id, new_owner) # change the owner
+    return(True)
+
+def set_default_registry(reg_id):
+    check_ownership()
+    sstore(msg.sender, reg_id)
+    return(True)
+
+def get_storage_key(reg_id, key):
+    # returns the key used for storage operations.
     with temp = alloc(64):
-        temp[0] = owner
+        temp[0] = reg_id
         temp[1] = key
         return(sha3(temp, items=2))
 
-macro _reg:
-    with currentVal = sload(loc):
-        if currentVal == 0:
-            sstore(loc, val)
-            True
-        else:
-            False
+##### REGISTRATION #####
 
-macro _rm:
-    with current_val = sload(loc):
-        if current_val != 0:
-            sstore(loc, 0)
-            True
-        else:
-            False
+macro _register():
+    with skey = self.get_storage_key(reg_id, key):
+        with current_val = sload(skey):
+            if current_val == 0:
+                sstore(skey, val)
+                True
+            else:
+                False
 
-macro _ud:
-    with current_val = sload(loc):
-        if current_val != 0:
-            sstore(loc, val)
-            True
-        else:
-            False
-            
 def register(key, val):
-    with loc = self.getloc(msg.sender, key):
-        return(_reg)
+    with reg_id = default_registry():
+        check_null_reg_id()
+        return(_register())
 
-def multiregister(keys:arr, vals:arr):
-    with num_keys = len(keys):
-        with i = 0:
-            while i < num_keys:
-                with loc = self.getloc(msg.sender, keys[i]):
-                    with val = vals[i]:
-                        with success = _reg:
-                            if not success:
-                                return([False, keys[i], val]:arr)
-                i += 1
-            return([True, 0, 0]:arr)
+def register_by_id(reg_id, key, val):
+    check_ownership()
+    return(_register())
+
+##### REMOVAL #####
+
+macro _remove():
+    with skey = self.get_storage_key(reg_id, key):
+        with current_val = sload(skey):
+            if current_val != 0:
+                sstore(skey, 0)
+                True
+            else:
+                False
 
 def remove(key):
-    with loc = self.getloc(msg.sender, key):
-        return(_rm)
+    with reg_id = default_registry():
+        check_null_reg_id()
+        return(_remove())
 
-def multiremove(keys:arr):
-    with num_keys = len(keys):
-        with i = 0:
-            while i < num_keys:
-                with loc = self.getloc(msg.sender, keys[i]):
-                    with success = _rm:
-                        if not success:
-                            return([False, keys[i]]:arr)
-                i += 1
-            return([True, 0]:arr)
+def remove_by_id(reg_id, key):
+    check_ownership()
+    return(_remove())
+
+##### UPDATES #####
+
+macro _update():
+    with skey = self.get_storage_key(reg_id, key):
+        with current_val = sload(skey):
+            if current_val != 0:
+                sstore(skey, val)
+                True
+            else:
+                False
 
 def update(key, val):
-    with loc = self.getloc(msg.sender, key):
-        return(_ud)
+    with reg_id = default_registry():
+        check_null_reg_id()
+        return(_update())
 
-def multiupdate(keys:arr, vals:arr):
-    with num_keys = len(keys):
-        with i = 0:
-            while i < num_keys:
-                with loc = self.getloc(msg.sender, keys[i]):
-                    with val = vals[i]:
-                        with success = _ud:
-                            if not success:
-                                return([False, keys[i], val]:arr)
-                i += 1
-            return([True, 0, 0]:arr)
+def update_by_id(reg_id, key, val):
+    check_ownership()
+    return(_update())
+
+##### LOOKUPS #####
+
+macro _lookup():
+    with skey = self.get_storage_key(reg_id, key):
+        sload(skey)
 
 def my_lookup(key):
-    with loc = self.getloc(msg.sender, key):
-        return(sload(loc))
+    with reg_id = default_registry():
+        return(_lookup())
 
 def lookup(owner, key):
-    with loc = self.getloc(owner, key):
-        return(sload(loc))
+    with reg_id = sload(owner):
+        return(_lookup())
+
+def lookup_by_id(reg_id, key):
+    return(_lookup())
+
+def lookup2(reg_id, key):
+    return(_lookup())
