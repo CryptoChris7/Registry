@@ -1,10 +1,22 @@
-from serpent_tests import Tester
+from serpent_tests import ContractTester, Accounts, Assert
 
-def main():
-    myTest = Tester('registry.se')
-    a1 = myTest.accounts[0]
-    a2 = myTest.accounts[1]
-    a2Send = {'sender':a2.privkey}
+class TestRegistry:
+    def test(self):
+        myTest = ContractTester('registry.se')
+        # Use a different sender sometimes to show the ownership stuff.
+        for i, account in enumerate(Accounts):
+            sender = {'sender':account.prikvey}
+            myTest.create_registry(kwds=sender, expects=(i+1))
+        
+        for i, account in enumerate(Accounts):
+            pass
+        myTest.register(args=('foo', 123), expects=1)
+        myTest.register(args=('foo', 456), expects=1, kwds=a1send)
+        myTest.lookup(args=(a0.as_int, 'foo'), expects=123)
+        myTest.lookup(args=(a1.as_int, 'foo'), expects=456)
+        myTest.update(args=('foo', 789), expects=1)
+        myTest.update(args=('bar', 1337), expects=0)
+'''
     test_cases = [('create_registry', (), {}, 1),
                   ('create_registry', (), a2Send, 2),
                   ('register', ('foo', 123), {}, 1),
@@ -22,3 +34,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+'''

@@ -1,4 +1,12 @@
 # -*- mode: python -*-
+#
+# Registry.se: Registry contract with transferable ownership of registries.
+#
+# Data structures:
+# sload(2**256 - 1)          # the number of registries on the contract
+# sload(i)                   # owner of the ith registry; i > 0
+# sload(msg.sender)          # default registry for msg.sender
+# sload(sha3([i, key]:arr))  # the value associated with key in the ith registry.
 
 macro True: 1
 macro False: 0
@@ -15,15 +23,19 @@ macro check_null_reg_id():
 
 macro default_registry(): sload(msg.sender)
 
+event gas_used(gas:indexed)
+
 ##### OWNERSHIP #####
 
 def create_registry():
+    start_gas = msg.gas
     with reg_id = sload(RegCount): # Get the number of registries.
         reg_id += 1
         sstore(RegCount, reg_id) # Increase the number of registries by one.
         sstore(reg_id, msg.sender) # Set the new registry's owner.
         if sload(msg.sender) == 0: # If the owner doesn't have a default, set it.
             sstore(msg.sender, reg_id)
+        log(type=gas_used, start_gas - msg.gas)
         return(reg_id) # Return the id of the new registry.
 
 def transfer_owner(new_owner, reg_id):
@@ -83,6 +95,33 @@ def remove_by_id(reg_id, key):
     check_ownership()
     return(_remove())
 
+def remove2(keys:arr):
+    with reg_id = default_registry():
+        if reg_id == 0:
+            return([False, 0]:arr)
+        with i = 0:
+            with num_keys = len(keys):
+                while i < num_keys:
+                    with key = keys[i]:
+                        with success = _remove():
+                            if not success:
+                                return([False, i]:arr)
+                    i += 1
+                return([True, num_keys]:arr)
+
+def remove_by_id2(reg_id, keys:arr):
+    if sload(reg_id) != msg.sender:
+        return([False, 0]:arr)
+    with i = 0:
+        with num_keys = len(keys):
+            while i < num_keys:
+                with key = keys[i]:
+                    with success = _remove():
+                        if not success:
+                            return([False, i]:arr)
+                i += 1
+            return([True, num_keys]:arr)
+
 ##### UPDATES #####
 
 macro _update():
@@ -109,16 +148,9 @@ macro _lookup():
     with skey = self.get_storage_key(reg_id, key):
         sload(skey)
 
-def my_lookup(key):
-    with reg_id = default_registry():
-        return(_lookup())
-
 def lookup(owner, key):
     with reg_id = sload(owner):
         return(_lookup())
 
 def lookup_by_id(reg_id, key):
-    return(_lookup())
-
-def lookup2(reg_id, key):
     return(_lookup())
