@@ -44,4 +44,3 @@ def test_registry():
     myTest.remove2(args=(['foo', 'bar'],), compare=[1, 2], kwds=a2_send) # a2 removes foo and bar from reg 3
     myTest.lookup_by_id(args=(3, 'foo'), compare=0)
     myTest.lookup_by_id(args=(3, 'bar'), compare=0)
-
