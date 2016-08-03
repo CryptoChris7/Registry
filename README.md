@@ -3,7 +3,327 @@ A contract for making registries which are owned,
 with transferable ownership.
 
 Address: `0x48216df3d955d9a8afd28d417ff21d06647e6a6d`
-
+Serpent signature: `extern registry.se: [create_registry:[]:int256, get_default_registry:[int256]:int256, get_owner:[int256]:int256, get_storage_key:[int256,int256]:int256, lookup:[int256,int256]:int256, lookup_by_id:[int256,int256]:int256, register:[int256,int256]:int256, register_by_id:[int256,int256,int256]:int256, remove:[int256]:int256, remove2:[int256[]]:int256[], remove_by_id:[int256,int256]:int256, remove_by_id2:[int256,int256[]]:int256[], set_default_registry:[int256]:int256, transfer_owner:[int256,int256]:int256, update:[int256,int256]:int256, update_by_id:[int256,int256,int256]:int256]`
+ABI signature: 
+```
+[
+  {
+    "constant": false, 
+    "type": "function", 
+    "name": "create_registry()", 
+    "outputs": [
+      {
+        "type": "int256", 
+        "name": "out"
+      }
+    ], 
+    "inputs": []
+  }, 
+  {
+    "constant": false, 
+    "type": "function", 
+    "name": "get_default_registry(int256)", 
+    "outputs": [
+      {
+        "type": "int256", 
+        "name": "out"
+      }
+    ], 
+    "inputs": [
+      {
+        "type": "int256", 
+        "name": "owner"
+      }
+    ]
+  }, 
+  {
+    "constant": false, 
+    "type": "function", 
+    "name": "get_owner(int256)", 
+    "outputs": [
+      {
+        "type": "int256", 
+        "name": "out"
+      }
+    ], 
+    "inputs": [
+      {
+        "type": "int256", 
+        "name": "reg_id"
+      }
+    ]
+  }, 
+  {
+    "constant": false, 
+    "type": "function", 
+    "name": "get_storage_key(int256,int256)", 
+    "outputs": [
+      {
+        "type": "int256", 
+        "name": "out"
+      }
+    ], 
+    "inputs": [
+      {
+        "type": "int256", 
+        "name": "reg_id"
+      }, 
+      {
+        "type": "int256", 
+        "name": "key"
+      }
+    ]
+  }, 
+  {
+    "constant": false, 
+    "type": "function", 
+    "name": "lookup(int256,int256)", 
+    "outputs": [
+      {
+        "type": "int256", 
+        "name": "out"
+      }
+    ], 
+    "inputs": [
+      {
+        "type": "int256", 
+        "name": "owner"
+      }, 
+      {
+        "type": "int256", 
+        "name": "key"
+      }
+    ]
+  }, 
+  {
+    "constant": false, 
+    "type": "function", 
+    "name": "lookup_by_id(int256,int256)", 
+    "outputs": [
+      {
+        "type": "int256", 
+        "name": "out"
+      }
+    ], 
+    "inputs": [
+      {
+        "type": "int256", 
+        "name": "reg_id"
+      }, 
+      {
+        "type": "int256", 
+        "name": "key"
+      }
+    ]
+  }, 
+  {
+    "constant": false, 
+    "type": "function", 
+    "name": "register(int256,int256)", 
+    "outputs": [
+      {
+        "type": "int256", 
+        "name": "out"
+      }
+    ], 
+    "inputs": [
+      {
+        "type": "int256", 
+        "name": "key"
+      }, 
+      {
+        "type": "int256", 
+        "name": "val"
+      }
+    ]
+  }, 
+  {
+    "constant": false, 
+    "type": "function", 
+    "name": "register_by_id(int256,int256,int256)", 
+    "outputs": [
+      {
+        "type": "int256", 
+        "name": "out"
+      }
+    ], 
+    "inputs": [
+      {
+        "type": "int256", 
+        "name": "reg_id"
+      }, 
+      {
+        "type": "int256", 
+        "name": "key"
+      }, 
+      {
+        "type": "int256", 
+        "name": "val"
+      }
+    ]
+  }, 
+  {
+    "constant": false, 
+    "type": "function", 
+    "name": "remove(int256)", 
+    "outputs": [
+      {
+        "type": "int256", 
+        "name": "out"
+      }
+    ], 
+    "inputs": [
+      {
+        "type": "int256", 
+        "name": "key"
+      }
+    ]
+  }, 
+  {
+    "constant": false, 
+    "type": "function", 
+    "name": "remove2(int256[])", 
+    "outputs": [
+      {
+        "type": "int256[]", 
+        "name": "out"
+      }
+    ], 
+    "inputs": [
+      {
+        "type": "int256[]", 
+        "name": "keys"
+      }
+    ]
+  }, 
+  {
+    "constant": false, 
+    "type": "function", 
+    "name": "remove_by_id(int256,int256)", 
+    "outputs": [
+      {
+        "type": "int256", 
+        "name": "out"
+      }
+    ], 
+    "inputs": [
+      {
+        "type": "int256", 
+        "name": "reg_id"
+      }, 
+      {
+        "type": "int256", 
+        "name": "key"
+      }
+    ]
+  }, 
+  {
+    "constant": false, 
+    "type": "function", 
+    "name": "remove_by_id2(int256,int256[])", 
+    "outputs": [
+      {
+        "type": "int256[]", 
+        "name": "out"
+      }
+    ], 
+    "inputs": [
+      {
+        "type": "int256", 
+        "name": "reg_id"
+      }, 
+      {
+        "type": "int256[]", 
+        "name": "keys"
+      }
+    ]
+  }, 
+  {
+    "constant": false, 
+    "type": "function", 
+    "name": "set_default_registry(int256)", 
+    "outputs": [
+      {
+        "type": "int256", 
+        "name": "out"
+      }
+    ], 
+    "inputs": [
+      {
+        "type": "int256", 
+        "name": "reg_id"
+      }
+    ]
+  }, 
+  {
+    "constant": false, 
+    "type": "function", 
+    "name": "transfer_owner(int256,int256)", 
+    "outputs": [
+      {
+        "type": "int256", 
+        "name": "out"
+      }
+    ], 
+    "inputs": [
+      {
+        "type": "int256", 
+        "name": "new_owner"
+      }, 
+      {
+        "type": "int256", 
+        "name": "reg_id"
+      }
+    ]
+  }, 
+  {
+    "constant": false, 
+    "type": "function", 
+    "name": "update(int256,int256)", 
+    "outputs": [
+      {
+        "type": "int256", 
+        "name": "out"
+      }
+    ], 
+    "inputs": [
+      {
+        "type": "int256", 
+        "name": "key"
+      }, 
+      {
+        "type": "int256", 
+        "name": "val"
+      }
+    ]
+  }, 
+  {
+    "constant": false, 
+    "type": "function", 
+    "name": "update_by_id(int256,int256,int256)", 
+    "outputs": [
+      {
+        "type": "int256", 
+        "name": "out"
+      }
+    ], 
+    "inputs": [
+      {
+        "type": "int256", 
+        "name": "reg_id"
+      }, 
+      {
+        "type": "int256", 
+        "name": "key"
+      }, 
+      {
+        "type": "int256", 
+        "name": "val"
+      }
+    ]
+  }
+]
+```
 ## Basic rules of the contract:
 
 1. All registries are identified by a natural (i.e. positive) number (called it's ID or reg_id).

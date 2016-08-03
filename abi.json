@@ -1,0 +1,317 @@
+[
+  {
+    "constant": false, 
+    "type": "function", 
+    "name": "create_registry()", 
+    "outputs": [
+      {
+        "type": "int256", 
+        "name": "out"
+      }
+    ], 
+    "inputs": []
+  }, 
+  {
+    "constant": false, 
+    "type": "function", 
+    "name": "get_default_registry(int256)", 
+    "outputs": [
+      {
+        "type": "int256", 
+        "name": "out"
+      }
+    ], 
+    "inputs": [
+      {
+        "type": "int256", 
+        "name": "owner"
+      }
+    ]
+  }, 
+  {
+    "constant": false, 
+    "type": "function", 
+    "name": "get_owner(int256)", 
+    "outputs": [
+      {
+        "type": "int256", 
+        "name": "out"
+      }
+    ], 
+    "inputs": [
+      {
+        "type": "int256", 
+        "name": "reg_id"
+      }
+    ]
+  }, 
+  {
+    "constant": false, 
+    "type": "function", 
+    "name": "get_storage_key(int256,int256)", 
+    "outputs": [
+      {
+        "type": "int256", 
+        "name": "out"
+      }
+    ], 
+    "inputs": [
+      {
+        "type": "int256", 
+        "name": "reg_id"
+      }, 
+      {
+        "type": "int256", 
+        "name": "key"
+      }
+    ]
+  }, 
+  {
+    "constant": false, 
+    "type": "function", 
+    "name": "lookup(int256,int256)", 
+    "outputs": [
+      {
+        "type": "int256", 
+        "name": "out"
+      }
+    ], 
+    "inputs": [
+      {
+        "type": "int256", 
+        "name": "owner"
+      }, 
+      {
+        "type": "int256", 
+        "name": "key"
+      }
+    ]
+  }, 
+  {
+    "constant": false, 
+    "type": "function", 
+    "name": "lookup_by_id(int256,int256)", 
+    "outputs": [
+      {
+        "type": "int256", 
+        "name": "out"
+      }
+    ], 
+    "inputs": [
+      {
+        "type": "int256", 
+        "name": "reg_id"
+      }, 
+      {
+        "type": "int256", 
+        "name": "key"
+      }
+    ]
+  }, 
+  {
+    "constant": false, 
+    "type": "function", 
+    "name": "register(int256,int256)", 
+    "outputs": [
+      {
+        "type": "int256", 
+        "name": "out"
+      }
+    ], 
+    "inputs": [
+      {
+        "type": "int256", 
+        "name": "key"
+      }, 
+      {
+        "type": "int256", 
+        "name": "val"
+      }
+    ]
+  }, 
+  {
+    "constant": false, 
+    "type": "function", 
+    "name": "register_by_id(int256,int256,int256)", 
+    "outputs": [
+      {
+        "type": "int256", 
+        "name": "out"
+      }
+    ], 
+    "inputs": [
+      {
+        "type": "int256", 
+        "name": "reg_id"
+      }, 
+      {
+        "type": "int256", 
+        "name": "key"
+      }, 
+      {
+        "type": "int256", 
+        "name": "val"
+      }
+    ]
+  }, 
+  {
+    "constant": false, 
+    "type": "function", 
+    "name": "remove(int256)", 
+    "outputs": [
+      {
+        "type": "int256", 
+        "name": "out"
+      }
+    ], 
+    "inputs": [
+      {
+        "type": "int256", 
+        "name": "key"
+      }
+    ]
+  }, 
+  {
+    "constant": false, 
+    "type": "function", 
+    "name": "remove2(int256[])", 
+    "outputs": [
+      {
+        "type": "int256[]", 
+        "name": "out"
+      }
+    ], 
+    "inputs": [
+      {
+        "type": "int256[]", 
+        "name": "keys"
+      }
+    ]
+  }, 
+  {
+    "constant": false, 
+    "type": "function", 
+    "name": "remove_by_id(int256,int256)", 
+    "outputs": [
+      {
+        "type": "int256", 
+        "name": "out"
+      }
+    ], 
+    "inputs": [
+      {
+        "type": "int256", 
+        "name": "reg_id"
+      }, 
+      {
+        "type": "int256", 
+        "name": "key"
+      }
+    ]
+  }, 
+  {
+    "constant": false, 
+    "type": "function", 
+    "name": "remove_by_id2(int256,int256[])", 
+    "outputs": [
+      {
+        "type": "int256[]", 
+        "name": "out"
+      }
+    ], 
+    "inputs": [
+      {
+        "type": "int256", 
+        "name": "reg_id"
+      }, 
+      {
+        "type": "int256[]", 
+        "name": "keys"
+      }
+    ]
+  }, 
+  {
+    "constant": false, 
+    "type": "function", 
+    "name": "set_default_registry(int256)", 
+    "outputs": [
+      {
+        "type": "int256", 
+        "name": "out"
+      }
+    ], 
+    "inputs": [
+      {
+        "type": "int256", 
+        "name": "reg_id"
+      }
+    ]
+  }, 
+  {
+    "constant": false, 
+    "type": "function", 
+    "name": "transfer_owner(int256,int256)", 
+    "outputs": [
+      {
+        "type": "int256", 
+        "name": "out"
+      }
+    ], 
+    "inputs": [
+      {
+        "type": "int256", 
+        "name": "new_owner"
+      }, 
+      {
+        "type": "int256", 
+        "name": "reg_id"
+      }
+    ]
+  }, 
+  {
+    "constant": false, 
+    "type": "function", 
+    "name": "update(int256,int256)", 
+    "outputs": [
+      {
+        "type": "int256", 
+        "name": "out"
+      }
+    ], 
+    "inputs": [
+      {
+        "type": "int256", 
+        "name": "key"
+      }, 
+      {
+        "type": "int256", 
+        "name": "val"
+      }
+    ]
+  }, 
+  {
+    "constant": false, 
+    "type": "function", 
+    "name": "update_by_id(int256,int256,int256)", 
+    "outputs": [
+      {
+        "type": "int256", 
+        "name": "out"
+      }
+    ], 
+    "inputs": [
+      {
+        "type": "int256", 
+        "name": "reg_id"
+      }, 
+      {
+        "type": "int256", 
+        "name": "key"
+      }, 
+      {
+        "type": "int256", 
+        "name": "val"
+      }
+    ]
+  }
+]
