@@ -23,19 +23,26 @@ macro check_null_reg_id():
 
 macro default_registry(): sload(msg.sender)
 
+macro HARDFAIL(): ~jump(0x100000000) # jump to an invalid code location, 2**32
+
 ##### OWNERSHIP #####
 
+
 def get_owner(reg_id):
-   return(sload(reg_id))
+    if reg_id:
+        return(sload(reg_id))
+    else:
+        HARDFAIL()
+
 
 def create_registry():
-    with reg_id = sload(RegCount): # Get the number of registries.
-        reg_id += 1
+    with reg_id = sload(RegCount) + 1: # Get the number of registries.
         sstore(RegCount, reg_id) # Increase the number of registries by one.
         sstore(reg_id, msg.sender) # Set the new registry's owner.
         if sload(msg.sender) == 0: # If the owner doesn't have a default, set it.
             sstore(msg.sender, reg_id)
         return(reg_id) # Return the id of the new registry.
+
 
 def transfer_owner(new_owner, reg_id):
     check_ownership()
@@ -44,13 +51,16 @@ def transfer_owner(new_owner, reg_id):
         sstore(msg.sender, 0) # delete default reg_id if neccessary.
     return(True)
 
+
 def get_default_registry(owner):
    return(sload(owner))
+
 
 def set_default_registry(reg_id):
     check_ownership()
     sstore(msg.sender, reg_id)
     return(True)
+
 
 def get_storage_key(reg_id, key):
     # returns the key used for storage operations.
@@ -59,7 +69,9 @@ def get_storage_key(reg_id, key):
         temp[1] = key
         return(sha3(temp, items=2))
 
+
 ##### REGISTRATION #####
+
 
 macro _register():
     with skey = self.get_storage_key(reg_id, key):
@@ -70,16 +82,20 @@ macro _register():
             else:
                 False
 
+
 def register(key, val):
     with reg_id = default_registry():
         check_null_reg_id()
         return(_register())
 
+
 def register_by_id(reg_id, key, val):
     check_ownership()
     return(_register())
 
+
 ##### REMOVAL #####
+
 
 macro _remove():
     with skey = self.get_storage_key(reg_id, key):
@@ -90,14 +106,17 @@ macro _remove():
             else:
                 False
 
+
 def remove(key):
     with reg_id = default_registry():
         check_null_reg_id()
         return(_remove())
 
+
 def remove_by_id(reg_id, key):
     check_ownership()
     return(_remove())
+
 
 def remove2(keys:arr):
    with reg_id = default_registry():
@@ -113,6 +132,7 @@ def remove2(keys:arr):
                    i += 1
                return([True, num_keys]:arr)
 
+
 def remove_by_id2(reg_id, keys:arr):
    if sload(reg_id) != msg.sender:
        return([False, 0]:arr)
@@ -126,7 +146,9 @@ def remove_by_id2(reg_id, keys:arr):
                i += 1
            return([True, num_keys]:arr)
 
+
 ##### UPDATES #####
+
 
 macro _update():
     with skey = self.get_storage_key(reg_id, key):
