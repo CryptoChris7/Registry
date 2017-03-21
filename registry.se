@@ -1,182 +1,78 @@
-# -*- mode: python -*-
-#
-# Registry.se: Registry contract with transferable ownership of registries.
-#
-# Data structures:
-# sload(2**256 - 1)          # the number of registries on the contract
-# sload(i)                   # owner of the ith registry; i > 0
-# sload(msg.sender)          # default registry for msg.sender
-# sload(sha3([i, key]:arr))  # the value associated with key in the ith registry.
+inset('MacroLib/common.sem')
 
-macro True: 1
-macro False: 0
+macro make_key($id, $name):
+    with $ptr = alloc(64):
+        $ptr[0] = $id
+        $ptr[1] = $name
+        sha3($ptr, items=2)
 
-macro RegCount: 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
-
-macro check_ownership():
-    if sload(reg_id) != msg.sender:
-        return(False)
-
-macro check_null_reg_id():
-    if reg_id == 0:
-        return(False)
-
-macro default_registry(): sload(msg.sender)
-
-macro HARDFAIL(): ~jump(0x100000000) # jump to an invalid code location, 2**32
-
-##### OWNERSHIP #####
+macro check_permission($id):
+    IF_ZERO($id, THROW())
+    IF_NOT_EQ(sload($id), msg.sender, THROW())
 
 
-def get_owner(reg_id):
-    if reg_id:
-        return(sload(reg_id))
-    else:
-        HARDFAIL()
+def any():
+    IF_NOT_ZERO(msg.value, THROW())
 
 
-def create_registry():
-    with reg_id = sload(RegCount) + 1: # Get the number of registries.
-        sstore(RegCount, reg_id) # Increase the number of registries by one.
-        sstore(reg_id, msg.sender) # Set the new registry's owner.
-        if sload(msg.sender) == 0: # If the owner doesn't have a default, set it.
-            sstore(msg.sender, reg_id)
-        return(reg_id) # Return the id of the new registry.
+##### CREATION/OWNERSHIP #####
+event RegistryCreated(ID: indexed, creator: indexed)
+def create():
+    with sender = msg.sender:
+        with count = sload(0) + 1:
+            sstore(count, sender)
+            sstore(0, count)
+            log(type=RegistryCreated, sender, count)
+            return(count: uint256)
 
 
-def transfer_owner(new_owner, reg_id):
-    check_ownership()
-    sstore(reg_id, new_owner) # change the owner
-    if sload(msg.sender) == reg_id:
-        sstore(msg.sender, 0) # delete default reg_id if neccessary.
-    return(True)
+def count():
+    return(sload(0): uint256)
 
 
-def get_default_registry(owner):
-   return(sload(owner))
+def getOwner(id: uint256):
+    return(sload(id): address)
 
 
-def set_default_registry(reg_id):
-    check_ownership()
-    sstore(msg.sender, reg_id)
-    return(True)
+event OwnerChanged(ID: indexed, newOwner: indexed, oldOwner: indexed)
+def changeOwner(id: uint256, newOwner: address):
+    check_permission(id)
+    log(type=OwnerChanged, id, newOwner, msg.sender)
+    sstore(id, newOwner)
+    return(True: bool)
 
 
-def get_storage_key(reg_id, key):
-    # returns the key used for storage operations.
-    with temp = alloc(64):
-        temp[0] = reg_id
-        temp[1] = key
-        return(sha3(temp, items=2))
+event PairAdded(ID: indexed, name: indexed, address: indexed)
+def add(id: uint256, name: bytes32, address: address):
+    check_permission(id)
+    with key = make_key(id, name):
+        IF_NOT_ZERO(sload(key), return(False: bool))
+        sstore(key, address)
+        log(type=PairAdded, id, name, address)
+        return(True: bool)
 
 
-##### REGISTRATION #####
+event PairUpdated(ID: indexed, name: indexed, address: indexed)
+def update(id: uint256, name: bytes32, address: address):
+    check_permission(id)
+    with key = make_key(id, name):
+        IF_ZERO(sload(key), return(False: bool))
+        sstore(key, address)
+        log(type=PairUpdated, id, name, address)
+        return(True: bool)
 
 
-macro _register():
-    with skey = self.get_storage_key(reg_id, key):
-        with current_val = sload(skey):
-            if current_val == 0:
-                sstore(skey, val)
-                True
-            else:
-                False
+event NameRemoved(ID: indexed, name: indexed)
+def remove(id: uint256, name: bytes32):
+    check_permission(id)
+    with key = make_key(id, name):
+        IF_ZERO(sload(key), return(False: bool))
+        sstore(key, 0)
+        log(type=NameRemoved, id, name)
+        return(True: bool)
 
 
-def register(key, val):
-    with reg_id = default_registry():
-        check_null_reg_id()
-        return(_register())
-
-
-def register_by_id(reg_id, key, val):
-    check_ownership()
-    return(_register())
-
-
-##### REMOVAL #####
-
-
-macro _remove():
-    with skey = self.get_storage_key(reg_id, key):
-        with current_val = sload(skey):
-            if current_val != 0:
-                sstore(skey, 0)
-                True
-            else:
-                False
-
-
-def remove(key):
-    with reg_id = default_registry():
-        check_null_reg_id()
-        return(_remove())
-
-
-def remove_by_id(reg_id, key):
-    check_ownership()
-    return(_remove())
-
-
-def remove2(keys:arr):
-   with reg_id = default_registry():
-       if reg_id == 0:
-           return([False, 0]:arr)
-       with i = 0:
-           with num_keys = len(keys):
-               while i < num_keys:
-                   with key = keys[i]:
-                       with success = _remove():
-                           if not success:
-                               return([False, i]:arr)
-                   i += 1
-               return([True, num_keys]:arr)
-
-
-def remove_by_id2(reg_id, keys:arr):
-   if sload(reg_id) != msg.sender:
-       return([False, 0]:arr)
-   with i = 0:
-       with num_keys = len(keys):
-           while i < num_keys:
-               with key = keys[i]:
-                   with success = _remove():
-                       if not success:
-                           return([False, i]:arr)
-               i += 1
-           return([True, num_keys]:arr)
-
-
-##### UPDATES #####
-
-
-macro _update():
-    with skey = self.get_storage_key(reg_id, key):
-        with current_val = sload(skey):
-            if current_val != 0:
-                sstore(skey, val)
-                True
-            else:
-                False
-
-def update(key, val):
-    with reg_id = default_registry():
-        check_null_reg_id()
-        return(_update())
-
-def update_by_id(reg_id, key, val):
-    check_ownership()
-    return(_update())
-
-##### LOOKUPS #####
-
-macro _lookup():
-    with skey = self.get_storage_key(reg_id, key):
-        sload(skey)
-
-def lookup(owner, key):
-    with reg_id = sload(owner):
-        return(_lookup())
-
-def lookup_by_id(reg_id, key):
-    return(_lookup())
+def lookup(id: uint256, name: bytes32):
+    IF_ZERO(id, THROW())
+    with key = make_key(id, name):
+        return(sload(key): address)

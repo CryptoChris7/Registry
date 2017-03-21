@@ -7,7 +7,7 @@ A3 = default_accounts[3]
 
 
 class RegistryTest(ContractTest):
-    source = 'registry2.se'
+    source = 'registry.se'
 
     def test_create(self):
         self.assertEqual(
